@@ -439,7 +439,7 @@
       </div>
       <button id="saveConfigBtn" class="btn" onclick="saveConfig()" disabled>💾 Configuratie opslaan</button>
       <button class="btn btn-secondary ml-10" onclick="closeEditor()">↩️ Terug</button>
-      <button class="btn ml-10" onclick="sendToDisplays()">📤 Display's versturen</button>
+      <button id="sendToDisplayBtn" class="btn ml-10" onclick="sendToDisplays()">📤 Display's versturen</button>
     </div>
 
     <!-- Feature detection & console hijack -->
@@ -508,6 +508,7 @@
     <script type="module">
       // Algemene vlag voor lopende bewerkingen
       let operationInProgress = false;
+      let sendDisplaysInProgress = false;
 
       function safeJSONParse(str, defaultValue = null) {
         try {
@@ -521,6 +522,17 @@
       const invalidPattern = /[\\\/:\*\?"<>\|\x00-\x1F]/;
       let metaMaxLen = null;
       let regMaxLen = null;
+
+      // Globale functie checkFormValidity
+      function checkFormValidity() {
+        const saveBtn = document.getElementById('saveConfigBtn');
+        const sendToDisplayBtn = document.getElementById('sendToDisplayBtn');
+        const hasError = document.querySelectorAll('.invalid-required').length > 0;
+        const allFilled = ['fieldPlaats', 'fieldOrgelbouwer', 'fieldJaartal']
+          .every(id => document.getElementById(id).value.trim() !== '');
+        saveBtn.disabled = hasError || !allFilled;
+        sendToDisplayBtn.disabled = hasError || !allFilled;
+      }
 
       // Live validation for field lengths
       function initLiveValidation() {
@@ -542,11 +554,6 @@
             else el.classList.remove('invalid-required');
           });
         });
-        function checkFormValidity() {
-          const saveBtn = document.getElementById('saveConfigBtn');
-          const hasError = document.querySelectorAll('.invalid-required').length > 0;
-          saveBtn.disabled = hasError;
-        }
         checkFormValidity();
         ['fieldPlaats', 'fieldOrgelbouwer', 'fieldJaartal'].forEach(id => {
           document.getElementById(id).addEventListener('input', checkFormValidity);
@@ -998,6 +1005,7 @@
         document.getElementById("configSection").style.display = "none";
         document.getElementById("editorSection").style.display = "block";
         selectEditorSide('left');
+        checkFormValidity();
       }
       function closeEditor() {
         document.getElementById("editorSection").style.display = "none";
@@ -1077,13 +1085,15 @@
         writer.write(json + "\r\n");
         metaMap[selectedConfigName] = displayNaam;
         writer.write("LIST_CONFIGS\r\n");
-        closeEditor();
+        if(!sendDisplaysInProgress)closeEditor();        
       }
 
       function sendToDisplays() {
-        console.log('webinterface', 'Versturen naar displays gestart');        
-        // Signal to Arduino to send configuration to displays
-        writer.write("SEND_TO_DISPLAYS=" + selectedConfigName + "\r\n");
+        console.log('webinterface', 'Versturen naar displays gestart');  
+        sendDisplaysInProgress = true;
+        saveConfig();
+        writer.write("SEND_TO_DISPLAYS=" + selectedConfigName + "\r\n"); // Signal to Arduino to send configuration to displays
+        sendDisplaysInProgress = false;
       }
 
       /**
