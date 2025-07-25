@@ -1,9 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+  <!-- Head: meta tags, title, and Google Fonts -->
   <meta charset="UTF-8">
   <title>Display Configurator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- STYLES -->
   <style>
+    /* Utility classes for moved inline styles */
+    .flex-center-wrap {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .flex-center {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .flex-1 {
+      flex: 1;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .mb-10 {
+      margin-bottom: 10px;
+    }
+
+    .mb-15 {
+      margin-bottom: 15px;
+    }
+
+    .mb-20 {
+      margin-bottom: 20px;
+    }
+
+    .flex-gap-10 {
+      display: flex;
+      gap: 10px;
+    }
+
+    .editor-container {
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+      flex-wrap: nowrap;
+      width: 100%;
+      padding: 0;
+      box-sizing: border-box;
+      margin-bottom: 0;
+      height: auto;
+    }
+
+    .ml-auto {
+      margin-left: auto;
+    }
+
+    .ml-10 {
+      margin-left: 10px;
+    }
+
+    .btn-secondary {
+      background-color: #888;
+    }
+
+    .fs-12 {
+      font-size: 12px;
+    }
+
+    #logFilters {
+      text-align: center;
+      margin: 10px 0;
+      display: none;
+    }
+
+    /* Input styling verplaatst uit inline attributes */
+    .editor-input {
+      flex: 1;
+      width: 1vw;
+      padding: 10px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background-color: #1a1c22;
+      color: var(--text-color);
+      box-sizing: border-box;
+    }
+
+    /* === Root Theme Variables === */
     :root {
       --accent-color: #4da3ff;
       --bg-color: #1c1f26;
@@ -12,8 +108,9 @@
       --text-color: #f0f0f0;
     }
 
+    /* === Layout & Typography === */
     body {
-      font-family: "Segoe UI", sans-serif;
+      font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
       background-color: var(--bg-color);
@@ -22,14 +119,17 @@
       flex-direction: column;
       min-height: 100vh;
     }
+
     main {
       flex: 1;
       display: flex;
       flex-direction: column;
       padding: 0 30px;
+      padding-bottom: 60px;
     }
 
-    h1, h2 {
+    h1,
+    h2 {
       color: var(--accent-color);
     }
 
@@ -39,22 +139,7 @@
       border-radius: 8px;
       padding: 20px;
       margin-bottom: 30px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    }
-
-    button, .btn {
-      background-color: var(--accent-color);
-      color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s ease-in-out;
-    }
-
-    button:hover {
-      background-color: #2e77cc;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     }
 
     ul {
@@ -73,392 +158,1298 @@
       text-decoration: underline;
     }
 
+    /* === Editor Grid & Cells === */
     .display-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      grid-auto-rows: min-content;
+      gap: 6px;
       background-color: var(--grid-bg);
-      padding: 15px;
+      padding: 6px 6px 0 6px;
       border: 1px solid var(--border-color);
       border-radius: 6px;
+      align-items: start;
     }
+
     .editor-half {
       box-sizing: border-box;
-      margin-top: 10px;
-      margin-bottom: 10px;
-      overflow-x: hidden;
+      margin: 20px 0px 20px 0px;
+      padding: 15px 0px 0px 0px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--grid-bg);
+      overflow: hidden;
+      transition: width 0.2s ease, opacity 0.2s ease;
     }
 
     .display-cell input {
       width: 100%;
-      padding: 8px;
+      padding: 3px 6px;
       border: 1px solid var(--border-color);
       border-radius: 4px;
       font-size: 14px;
       text-align: center;
       background-color: #1a1c22;
       color: var(--text-color);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
       box-sizing: border-box;
     }
 
     .display-cell {
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 10px;
-      background-color: #2a2e36;
+      padding: 2px 4px;
+      background-color: #2f343d;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+      margin: 0 0 2px 0;
+      line-height: 1;
+      min-height: 80px;
+    }
+
+    .zoomed-in {
+      width: 100%;
+      opacity: 1;
+      border: 2px solid var(--accent-color);
+      box-shadow: 0 0 10px rgba(77, 163, 255, 0.6);
+      padding: 5px 20px 0px 5px;
+    }
+
+    .zoomed-out {
+      width: 0;
+      height: 0;
+      opacity: 0;
+    }
+
+    .editor-side-btn.active {
+      background-color: #2e77cc;
+      font-weight: bold;
+    }
+
+    #editorSection {
+      display: none;
+    }
+
+    /* === Buttons & Tables === */
+    /* Mark required-but-empty inputs */
+    .invalid-required {
+      border: 2px solid red !important;
+    }
+
+    button,
+    .btn {
+      background-color: var(--accent-color);
+      color: #fff;
+      border: none;
+      padding-block: 10px;
+      padding-inline: clamp(8px, 1.7vw, 20px);
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out, transform 0.2s ease;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    button:hover,
+    .btn:hover {
+      background-color: #2e77cc;
+      transform: translateY(-2px);
+    }
+
+    button:disabled,
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
 
     .btn {
       margin-top: 15px;
     }
 
-    #editorSection {
-      display: none;
-      margin-top: 20px;
+    #connectBtn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
     }
 
-    .editor-half {
-      flex: none;
-      width: 50%;
-      transition: all 0.3s ease;
+    #connectBtn.connected {
+      background-color: #4dff4d;
+      color: #1c1f26;
     }
-    .zoomed-in {
-      transform: scale(1.05);
-      opacity: 1;
-      width: 75%;
-      z-index: 2;
+
+    #connectBtn.disconnected {
+      background-color: #ff4d4d;
+      color: #fff;
     }
-    .zoomed-out {
-      transform: scale(0.85);
-      opacity: 0.3;
-      width: 25%;
-      z-index: 1;
+
+    table {
+      border-spacing: 0;
+      width: 100%;
+    }
+
+    table thead {
+      background-color: #22252b;
+    }
+
+    table th,
+    table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    table td {
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    table tr:hover {
+      background-color: #2e2f38;
+    }
+
+    tr.selected {
+      background-color: rgba(77, 163, 255, 0.2);
+    }
+
+    tr.selected:hover {
+      background-color: rgba(77, 163, 255, 0.3) !important;
+    }
+
+    /* === Footer & Debug Console === */
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      padding: 10px 0;
+      background: var(--bg-color);
+      border-top: 1px solid var(--border-color);
+    }
+
+    #serialConsole {
+      display: none;
+      background-color: #000;
+      color: #0f0;
+      padding: 10px;
+      height: 150px;
+      overflow-y: auto;
+      margin: 0 30px 20px 30px;
+    }
+
+    #logFilters .btn {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 4px 8px;
+      font-size: 12px;
+      margin: 0 4px;
+      box-shadow: none;
+    }
+
+    #logFilters .btn:hover {
+      background-color: var(--grid-bg);
+    }
+
+    #serialConsole .log-electronica {
+      color: #3beb0a;
+      /* kies eigen kleur voor electronica */
+    }
+
+    #serialConsole .log-webinterface {
+      color: #61afef;
+      /* kies eigen kleur voor webinterface */
     }
   </style>
+  <!-- Include JSZip for ZIP backups -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 </head>
+
 <body>
-  <main>
-  <h1>Display Configurator</h1>
+  <main>    
+    <dialog id="genericDialog">
+      <form method="dialog">
+        <h3 id="genericTitle"></h3>
+        <p id="genericMessage"></p>
+        <menu id="genericButtons"></menu>
+      </form>
+    </dialog>
+    <h1>Display Configurator</h1>
 
-  <div class="section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-    <div style="display: flex; gap: 10px; align-items: center;">
-      <button id="connectBtn">🔌 Verbinden met Elektronica</button>
+    <!-- Body header: connection button and device information -->
+    <div class="section flex-center-wrap">
+      <!-- Left: Connect button -->
+      <div class="flex-center flex-1">
+        <button id="connectBtn" class="disconnected" style="font-weight: bold;">
+          🔌 Klik hier om te verbinden
+        </button>
+      </div>
+      <!-- Center: Sampleset -->
+      <div class="flex-1 text-center">
+        <div id="samplesetInfo" style="font-style: italic; color: #ccc; font-size: 16px;">
+          Huidig geladen sampleset: -
+        </div>
+      </div>
+      <!-- Right: Firmware/Hardware -->
+      <div class="flex-1 text-right">
+        <div id="deviceInfo" style="font-style: italic; color: #ccc;">
+          Firmware: -<br>Hardware: -
+        </div>
+      </div>
     </div>
-    <div style="text-align: right;">
-      <div id="connectionStatus" style="font-weight: bold; color: #ff4d4d;">🔴 Niet verbonden</div>
-      <div id="deviceInfo" style="font-style: italic; color: #ccc;">Firmware: onbekend – Hardware: onbekend</div>
-      <div id="samplesetInfo" style="font-style: italic; color: #ccc;">Sampleset: onbekend</div>
+
+    <!-- Configuration section: list of available configurations -->
+    <div class="section" id="configSection">
+      <h2>Beschikbare configuraties</h2>
+      <div class="mb-10 flex-center">
+        <button class="btn" onclick="createNewConfig()" disabled>➕ Nieuw</button>
+        <button class="btn" onclick="editSelectedConfig()" disabled>✏️ Bewerken</button>
+        <button class="btn" onclick="deleteSelectedConfig()" disabled>🗑️ Verwijderen</button>
+        <button id="toggleLinkBtn" class="btn" disabled>🔗 Koppelen</button>        
+        <button id="backupBtn" class="btn ml-auto" disabled>💾 Backup Configuraties</button>
+        <button id="restoreBtn" class="btn" disabled>⤵️ Restore Configuraties</button>
+        <input type="file" id="restoreZipInput" accept=".zip" style="display:none;">
+        <button id="importXmlBtn" class="btn" disabled style="display:none;">📁 XML importeren </button>
+        <input type="file" id="importXmlInput" accept=".xml" multiple style="display:none;">
+      </div>
+      <table style="width: 100%; border-collapse: collapse; color: var(--text-color);">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--border-color);">
+            <th style="text-align: left; padding: 5px;">Naam</th>
+            <th style="text-align: left; padding: 5px;">Gekoppeld</th>
+          </tr>
+        </thead>
+        <tbody id="configList"></tbody>
+      </table>
     </div>
-  </div>
 
-  <div class="section" id="configSection">
-    <h2>Beschikbare configuraties</h2>
-    <div style="margin-bottom: 10px;">
-      <button class="btn" onclick="createNewConfig()">➕ Nieuw</button>
-      <button class="btn" onclick="editSelectedConfig()">✏️ Bewerken</button>
-      <button class="btn" onclick="deleteSelectedConfig()">🗑️ Verwijderen</button>
+    <!-- Editor section: configuration editor -->
+    <div class="section" id="editorSection">
+      <h2>Bewerk configuratie</h2>
+      <div class="mb-20 flex-gap-10">
+        <input id="fieldPlaats" type="text" placeholder="Plaats *" class="editor-input">
+        <input id="fieldOrgelbouwer" type="text" placeholder="Orgelbouwer *" class="editor-input">
+        <input id="fieldJaartal" type="text" placeholder="Jaartal *" class="editor-input">
+        <input id="fieldConnectedMidiMessage" type="text" placeholder="ConnectedMidiMessage" class="editor-input" disabled>
+      </div>
+      <div class="mb-15">
+        <button class="btn editor-side-btn" onclick="selectEditorSide('left')">🔍 Bewerken links</button>
+        <button class="btn editor-side-btn" onclick="selectEditorSide('right')">🔍 Bewerken rechts</button>
+      </div>
+      <div class="editor-container">
+        <div id="leftGrid" class="display-grid editor-half"></div>
+        <div id="rightGrid" class="display-grid editor-half"></div>
+      </div>
+      <button id="saveConfigBtn" class="btn" onclick="saveConfig()" disabled>💾 Configuratie opslaan</button>
+      <button class="btn btn-secondary ml-10" onclick="closeEditor()">↩️ Terug</button>
+      <button class="btn ml-10" onclick="sendToDisplays()">📤 Display's versturen</button>
     </div>
-    <table style="width: 100%; border-collapse: collapse; color: var(--text-color);">
-      <thead>
-        <tr style="border-bottom: 1px solid var(--border-color);">
-          <th style="text-align: left; padding: 5px;">Naam</th>
-          <th style="text-align: left; padding: 5px;">Gekoppeld</th>
-          <th style="text-align: left; padding: 5px;">Aantal keer geladen</th>
-        </tr>
-      </thead>
-      <tbody id="configList"></tbody>
-    </table>
-  </div>
 
-  <div class="section" id="editorSection">
-    <h2>Bewerk configuratie</h2>
-    <div style="margin-bottom: 20px; display: flex; gap: 20px;">
-      <input id="fieldPlaats" type="text" placeholder="Plaats" style="flex:1; padding: 10px; font-size: 14px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #1a1c22; color: var(--text-color);">
-      <input id="fieldOrgelbouwer" type="text" placeholder="Orgelbouwer" style="flex:1; padding: 10px; font-size: 14px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #1a1c22; color: var(--text-color);">
-      <input id="fieldJaartal" type="text" placeholder="Jaartal" style="flex:1; padding: 10px; font-size: 14px; border-radius: 6px; border: 1px solid var(--border-color); background-color: #1a1c22; color: var(--text-color);">
-    </div>
-    <div style="margin-bottom: 15px;">
-      <button class="btn" onclick="selectEditorSide('left')">🔍 Bewerken links</button>
-      <button class="btn" onclick="selectEditorSide('right')">🔍 Bewerken rechts</button>
-    </div>
-    <div style="display: flex; gap: 20px; align-items: flex-start; width: 100%; overflow-x: auto; padding: 10px 0;">
-      <div id="leftGrid" class="display-grid editor-half"></div>
-      <div id="rightGrid" class="display-grid editor-half"></div>
-    </div>
-    <button class="btn" onclick="saveConfig()">💾 Configuratie opslaan</button>
-    <button class="btn" onclick="closeEditor()" style="background-color:#888; margin-left: 10px;">↩️ Terug</button>
-  </div>
-
-  <script>
-    const CURRENT_UI_VERSION = "1.0.1";
-
-    let selectedConfigName = null;
-    let port, reader, writer;
-
-    const leftGrid = document.getElementById("leftGrid");
-    const rightGrid = document.getElementById("rightGrid");
-
-    for (let i = 0; i < 64; i++) {
-      const wrapper = document.createElement("div");
-      wrapper.className = "display-cell";
-      wrapper.innerHTML = `
-        <div style="font-weight: bold; margin-bottom: 6px;">Display ${i + 1}</div>
-        <input type="text" placeholder="Naam" data-field="naam" data-index="${i}">
-        <input type="text" placeholder="Naam2" data-field="naam2" data-index="${i}">
-        <input type="text" placeholder="Voet" data-field="voet" data-index="${i}">
-        <input type="text" placeholder="Manuaal" data-field="manuaal" data-index="${i}">
-      `;
-      if (i < 32) {
-        leftGrid.appendChild(wrapper);
-      } else {
-        rightGrid.appendChild(wrapper);
-      }
-    }
-
-    document.getElementById("connectBtn").onclick = async () => {
-      try {
-        port = await navigator.serial.requestPort();
-        await port.open({ baudRate: 115200 });
-
-        const encoder = new TextEncoderStream();
-        encoder.readable.pipeTo(port.writable);
-        writer = encoder.writable.getWriter();
-
-        const decoder = new TextDecoderStream();
-        decoder.readable.pipeTo(new WritableStream({
-          write(chunk) {
-            processIncoming(chunk);
+    <!-- Feature detection & console hijack -->
+    <script type="module">
+      const Logger = {
+        native: {
+          log: console.log.bind(console),
+          warn: console.warn.bind(console),
+          error: console.error.bind(console)
+        },
+        addEntry(type, text, level = 'log') {
+          const c = document.getElementById('serialConsole');
+          const e = document.createElement('div');
+          e.classList.add(
+            'log-entry',
+            type === 'electronica' ? 'log-electronica' : 'log-webinterface'
+          );
+          let prefix;
+          if (type === 'electronica') {
+            prefix = 'Electronica: ';
+          } else {
+            prefix = level === 'warn' ? 'WebInterface Warning: '
+                   : level === 'error' ? 'WebInterface Error: '
+                   : 'WebInterface: ';
           }
-        }));
-
-        reader = port.readable.pipeThrough(new TextDecoderStream()).getReader();
-
-        writer.write("LIST_CONFIGS\n");
-        writer.write("INFO_DEVICE\n");
-        writer.write("SAMPLESET\n");
-        readLoop();
-
-        document.getElementById("connectionStatus").textContent = "🟢 Verbonden met Elektronica";
-        document.getElementById("connectionStatus").style.color = "#4dff4d";
-      } catch (e) {
-        document.getElementById("connectionStatus").textContent = "🔴 Niet verbonden";
-        document.getElementById("connectionStatus").style.color = "#ff4d4d";
-        console.error(e);
+          e.textContent = prefix + text;
+          c.appendChild(e);
+          c.scrollTop = c.scrollHeight;
+        },
+        log(...args) {
+          this.native.log(...args);
+          const msg = args.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(' ');
+          this.addEntry('webinterface', msg, 'log');
+        },
+        warn(...args) {
+          this.native.warn(...args);
+          const msg = args.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(' ');
+          this.addEntry('webinterface', msg, 'warn');
+        },
+        error(...args) {
+          this.native.error(...args);
+          const msg = args.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(' ');
+          this.addEntry('webinterface', msg, 'error');
+        },
+        electronica(...args) {
+          this.native.log(...args);
+          const msg = args.map(a => typeof a === 'string' ? a : JSON.stringify(a)).join(' ');
+          this.addEntry('electronica', msg, 'log');
+        }
+      };
+      
+      console.log = Logger.log.bind(Logger);
+      console.warn = Logger.warn.bind(Logger);
+      console.error = Logger.error.bind(Logger);
+      console.electronica = Logger.electronica.bind(Logger);
+      window.addLogEntry = Logger.addEntry.bind(Logger);
+      if (!("serial" in navigator)) {
+        console.error("Web Serial API wordt niet ondersteund in deze browser.");
+        const btn = document.getElementById("connectBtn");
+        btn.textContent = "⚠️ Serial niet ondersteund";
+        btn.disabled = true;
       }
-    };
+    </script>
 
-    async function readLoop() {
-      while (true) {
-        const { value, done } = await reader.read();
-        if (done) break;
-        processIncoming(value);
+    <!-- SERIAL, DATA, UI, XML, VERSION, DEBUG SCRIPTS -->
+    <script type="module">
+      // Algemene vlag voor lopende bewerkingen
+      let operationInProgress = false;
+
+      function safeJSONParse(str, defaultValue = null) {
+        try {
+          return JSON.parse(str);
+        } catch (e) {
+          console.error('safeJSONParse: cannot parse JSON', e, str);
+          return defaultValue;
+        }
       }
-    }
+      // --- Global field length limits (set by handshake) ---
+      const invalidPattern = /[\\\/:\*\?"<>\|\x00-\x1F]/;
+      let metaMaxLen = null;
+      let regMaxLen = null;
 
-    function processIncoming(data) {
-      if (data.startsWith("CONFIG_LIST=")) {
-        const json = data.substring("CONFIG_LIST=".length);
-        const configs = JSON.parse(json);
-        const ul = document.getElementById("configList");
-        ul.innerHTML = "";
-        configs.forEach(entry => {
-          const tr = document.createElement("tr");
-          tr.style.cursor = "pointer";
-          tr.onclick = () => {
-            selectedConfigName = entry.naam;
-            highlightSelectedConfig(entry.naam);
-          };
-          tr.innerHTML = `
-            <td style="padding: 5px;">${entry.naam}</td>
-            <td style="padding: 5px;">${entry.gekoppeld ? "✅" : "❌"}</td>
-            <td style="padding: 5px;">${entry.aantal || 0}</td>
-          `;
-          ul.appendChild(tr);
+      // Live validation for field lengths
+      function initLiveValidation() {
+        ['fieldPlaats', 'fieldOrgelbouwer', 'fieldJaartal'].forEach(id => {
+          const el = document.getElementById(id);
+          el.addEventListener('input', () => {
+            const val = el.value.trim();
+            let isInvalid = false;
+            if (!val) isInvalid = true;
+            if (metaMaxLen && el.value.length > metaMaxLen) isInvalid = true;
+            if (invalidPattern.test(el.value)) isInvalid = true;
+            if (isInvalid) el.classList.add('invalid-required');
+            else el.classList.remove('invalid-required');
+          });
+        });
+        document.querySelectorAll('[data-field]').forEach(el => {
+          el.addEventListener('input', () => {
+            if (regMaxLen && el.value.length > regMaxLen) el.classList.add('invalid-required');
+            else el.classList.remove('invalid-required');
+          });
+        });
+        function checkFormValidity() {
+          const saveBtn = document.getElementById('saveConfigBtn');
+          const hasError = document.querySelectorAll('.invalid-required').length > 0;
+          saveBtn.disabled = hasError;
+        }
+        checkFormValidity();
+        ['fieldPlaats', 'fieldOrgelbouwer', 'fieldJaartal'].forEach(id => {
+          document.getElementById(id).addEventListener('input', checkFormValidity);
+        });
+        document.querySelectorAll('[data-field]').forEach(el => {
+          el.addEventListener('input', checkFormValidity);
         });
       }
-      else if (data.startsWith("INFO_DEVICE=")) {
-        const json = data.substring("INFO_DEVICE=".length);
-        const info = JSON.parse(json);
-        document.getElementById("deviceInfo").textContent = `Firmware: ${info.firmware} – Hardware: ${info.hardware}`;
-      }
-      else if (data.startsWith("CONFIG_DATA=")) {
-        const json = data.substring("CONFIG_DATA=".length);
-        const payload = JSON.parse(json);
-        const config = payload.config;
-        const meta = payload.meta || {};
-        config.forEach((item, i) => {
-          document.querySelector(`[data-index='${i}'][data-field='naam']`).value = item.naam;
-          document.querySelector(`[data-index='${i}'][data-field='naam2']`).value = item.naam2;
-          document.querySelector(`[data-index='${i}'][data-field='voet']`).value = item.voet;
-          document.querySelector(`[data-index='${i}'][data-field='manuaal']`).value = item.manuaal;
+      // Keep latest config list for uniqueness checks
+      let globalConfigs = [];
+      let selectedConfigName = null;
+      let currentVpoID = "";
+      let linkingPending = false;
+      let unlinkingPending = false;
+      const metaMap = {};
+      let port, reader, writer;
+      let readBuffer = "";
+      const leftGrid = document.getElementById("leftGrid");
+      const rightGrid = document.getElementById("rightGrid");
+      let layoutVariant = 'layout1';
+      let showNaam2 = true;
+      function buildGrid(startIndex) {
+        const isLeft = startIndex === 0;
+        // Determine column counts per row for each layout
+        const counts = layoutVariant === 'layout2'
+          ? [4,4,4,4,4,4,3,3,2]
+          : [4,4,4,4,4,4,4,4];
+        const container = isLeft ? leftGrid : rightGrid;
+        // Disable parent grid styling so rows render in sequence
+        container.classList.remove('display-grid');
+        container.style.display = 'block';
+        container.innerHTML = '';
+        let idx = startIndex;
+        counts.forEach(count => {
+          // Create a row container with CSS grid
+          const row = document.createElement('div');
+          row.style.display = 'grid';
+          // Each cell always 25% width, so a row with count cells spans count * 25%
+          row.style.gridTemplateColumns = `repeat(${count}, 25%)`;
+          row.style.gap = '6px';
+          row.style.marginBottom = '6px';
+          row.style.width = '100%';
+          // For right block, align rows with fewer than 4 cells to the right
+          if (!isLeft && count < 4) {
+            row.style.justifyContent = 'end';
+          }
+          // Build cells for this row
+          const cells = [];
+          for (let j = 0; j < count; j++) {
+            const i = idx++;
+            const wrapper = document.createElement('div');
+            wrapper.className = 'display-cell';
+            wrapper.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 0;">
+        <button class="btn" style="margin: 0.5vw 0px 0.5vw 0px;" onclick="removeDisplay(${i})">&minus;</button>
+        <span style="font-weight: bold; font-size: 14px;">Display ${i + 1}</span>
+        <button class="btn" style="margin: 0.5vw 0px 0.5vw 0px;" onclick="insertDisplay(${i})">+</button>
+      </div>
+      <input type="text" placeholder="Registernaam" data-field="naam" data-index="${i}">
+      <input type="text" placeholder="Registernaam 2e rij" data-field="naam2" data-index="${i}">
+      <input type="text" placeholder="Voet" data-field="voet" data-index="${i}">
+      <input type="text" placeholder="Manuaal" data-field="manuaal" data-index="${i}">`;
+            cells.push(wrapper);
+          }
+          // Append each cell into the row
+          cells.forEach(cell => row.appendChild(cell));
+          // Add completed row to container
+          container.appendChild(row);
         });
-        document.getElementById("fieldPlaats").value = meta.plaats || "";
-        document.getElementById("fieldOrgelbouwer").value = meta.orgelbouwer || "";
-        document.getElementById("fieldJaartal").value = meta.jaartal || "";
+      }
+      function buildGrids() {
+        buildGrid(0);
+        buildGrid(32);
+      }
+      buildGrids();
+      updateNaam2Visibility();
+      document.getElementById("connectBtn").onclick = async () => {
+        console.log('Connect knop ingedrukt');
+        const btn = document.getElementById("connectBtn");
+        if (!port) {
+          console.log("Start Web Serial…");
+          if (!("serial" in navigator)) {
+            console.error("Web Serial API niet beschikbaar bij runtime.");
+            btn.textContent = "⚠️ Serial niet ondersteund";
+            btn.disabled = true;
+            return;
+          }
+          try {
+            console.log("→ Vraag seriële poort op...");
+            port = await navigator.serial.requestPort();
+            console.log("→ Poort gekozen:", port);
+            console.log("→ Poort openen met 115200 baud...");
+            await port.open({ baudRate: 115200 });
+            try {
+              await port.setSignals({ dataTerminalReady: false, requestToSend: false });
+              console.log("→ DTR + RTS uitgevinkt!");
+            } catch (signalErr) {
+              console.warn("Waarschuwing: kon DTR/RTS niet uitzetten:", signalErr);
+            }
+            const encoder = new TextEncoderStream();
+            encoder.readable.pipeTo(port.writable);
+            writer = encoder.writable.getWriter();
+            reader = port.readable.pipeThrough(new TextDecoderStream()).getReader();
+            console.log("→ Start leeslus…");
+            readLoop();
+            console.log("→ Stuur HANDSHAKE-commando (CRLF)");
+            writer.write("HANDSHAKE\r\n");
+          } catch (e) {
+            console.error("**Fout tijdens verbinden**:", e);
+            btn.textContent = "🔴 Niet verbonden";
+            btn.classList.remove("connected");
+            btn.classList.add("disconnected");
+          }
+        } else {
+          console.log('Disconnect knop ingedrukt');
+          // Nieuwe controle: blokkeer disconnect als een bewerking bezig is
+          if (operationInProgress) {
+            alert("Er loopt een bewerking. Wacht tot deze voltooid is.");
+            return;
+          }
+          console.log("Disconnect-knop ingedrukt, sluit seriële poort…");
+          // Zet de knop tijdelijk uit
+          btn.disabled = true;
+
+          try {
+            // 1) reader cancel en release
+            if (reader) {
+              try { await reader.cancel(); } catch (e) { console.warn("reader.cancel faalde:", e); }
+              try { reader.releaseLock(); } catch (e) { console.warn("reader.releaseLock faalde:", e); }
+              reader = null;
+            }
+
+            // 2) writer close en release
+            if (writer) {
+              try { await writer.close(); } catch (e) { console.warn("writer.close faalde:", e); }
+              try { writer.releaseLock(); } catch (e) { console.warn("writer.releaseLock faalde:", e); }
+              writer = null;
+            }
+
+            // 3) nu pas sluit je de port
+            try { await port.close(); } catch (e) { console.warn("port.close faalde (negeerbaar):", e); }
+            port = null;
+          } finally {
+            // Zet de knop altijd weer terug in de “klaar om te verbinden”-stand
+            btn.textContent = "🔌 Klik hier om te verbinden";
+            btn.classList.remove("connected");
+            btn.classList.add("disconnected");
+            btn.disabled = false;
+
+            // Reset de rest van je UI
+            document.getElementById("deviceInfo").innerHTML = "Firmware: -<br>Hardware: -";
+            document.getElementById("samplesetInfo").textContent = "Huidig geladen sampleset: -";
+            document.getElementById("configList").innerHTML = "";
+            selectedConfigName = null;
+            document.querySelector("button[onclick='editSelectedConfig()']").disabled = true;
+            document.querySelector("button[onclick='deleteSelectedConfig()']").disabled = true;
+            document.getElementById("importXmlBtn").disabled = true;
+            document.getElementById("backupBtn").disabled = true;
+            document.getElementById("restoreBtn").disabled = true;
+            document.getElementById("toggleLinkBtn").disabled = true;
+          }
+        }
+      };
+      async function readLoop() {
+        console.log("readLoop gestart");
+        while (true) {
+          let result;
+          try { result = await reader.read(); }
+          catch (err) { console.error("Fout in reader.read():", err); break; }
+          const { value, done } = result;
+          if (done) { console.log("readLoop beëindigd (done)"); break; }
+          readBuffer += value;
+          if (readBuffer.length > 10000) {
+            console.warn("readBuffer overflow, resetting buffer");
+            readBuffer = "";
+          }
+          const parts = readBuffer.split("\n");
+          readBuffer = parts.pop();
+          for (const line of parts) {
+            console.electronica(`processIncoming – ruwe data: ${JSON.stringify(line)}`);            
+            processIncoming(line);
+          }
+        }
+      }
+      function processIncoming(data) {
+        if (data.startsWith("HANDSHAKE:")) {
+          const jsonPart = data.substring("HANDSHAKE:".length).trim();
+          try {
+            const info = JSON.parse(jsonPart);
+            currentVpoID = info.vpoID || "";
+            metaMaxLen = info.max_meta;
+            regMaxLen = info.max_reg;
+            layoutVariant = info.layoutVariant || 'layout1';
+            showNaam2 = info.enableNaam2 !== false;
+            buildGrids();
+            updateNaam2Visibility();
+            // Initialize live validation now that limits are known
+            initLiveValidation();
+            const btn = document.getElementById("connectBtn");
+            btn.textContent = "🟢 Verbonden";
+            btn.classList.remove("disconnected");
+            btn.classList.add("connected");
+            document.getElementById("deviceInfo").innerHTML =
+              `Firmware: ${info.firmware}<br>Hardware: ${info.hardware}`;
+            if (writer) {
+              writer.write("LIST_CONFIGS\r\n");
+              writer.write("SAMPLESET\r\n");
+            }
+            document.querySelector("button[onclick='createNewConfig()']").disabled = false;
+            document.querySelector("button[onclick='editSelectedConfig()']").disabled = true;
+            document.querySelector("button[onclick='deleteSelectedConfig()']").disabled = true;
+            document.getElementById("importXmlBtn").disabled = false;
+            document.getElementById("backupBtn").disabled = false;
+            document.getElementById("restoreBtn").disabled = false;
+            // Auto-backup once per month
+            try {
+              const now = new Date();
+              const currentYM = `${now.getFullYear()}-${now.getMonth() + 1}`;
+              const lastYM = localStorage.getItem('lastBackupMonth');
+              if (lastYM !== currentYM) {
+                localStorage.setItem('lastBackupMonth', currentYM);
+                // trigger existing backup flow only if connected (writer exists)
+                if (writer) {
+                  document.getElementById('backupBtn').click();
+                }
+              }
+            } catch (e) {
+              console.error('Fout in auto-backup:', e);
+            }
+          } catch (err) { console.error("Onverwachte HANDSHAKE-data:", err); }
+          return;
+        }
+        if (data.startsWith("CONFIG_LIST=")) {
+          operationInProgress = false;
+          const json = data.substring("CONFIG_LIST=".length).trim();
+          let configs;
+          configs = safeJSONParse(json, []);
+          if (!Array.isArray(configs)) {
+            console.error('Invalid CONFIG_LIST JSON, geen array', configs, json);
+            return;
+          }
+          // Store for uniqueness checks
+          globalConfigs = configs;
+          // Backup list handling
+          if (backupPending) {
+            backupNames = configs.map(e => e.bestandsnaam);
+            if (backupNames.length > 0) {
+              writer.write("LOAD_CONFIG=" + backupNames[0] + "\r\n");
+            } else {
+              backupPending = false;
+            }
+            return;
+          }
+          // Update samplesetInfo label based on linked vpoID
+          const linkedEntry = currentVpoID
+            ? configs.find(e => e.gekoppeld === currentVpoID)
+            : null;
+          const labelElem = document.getElementById("samplesetInfo");
+          if (linkedEntry) {
+            labelElem.textContent = "Huidig geladen sampleset: " + linkedEntry.naam;
+            labelElem.style.color = "#ccc";
+          } else if (currentVpoID) {
+            labelElem.textContent = "Sampleset nog niet gekoppeld, midi bericht: " + currentVpoID;
+            labelElem.style.color = "var(--accent-color)";
+          } else {
+            labelElem.textContent = "Geen sampleset geladen";
+            labelElem.style.color = "#ccc";
+          }
+          const alreadyLinked = configs.some(e => e.gekoppeld === currentVpoID);
+          const ul = document.getElementById("configList");
+          ul.innerHTML = "";
+          const toggleBtn = document.getElementById("toggleLinkBtn");
+          toggleBtn.disabled = true;
+          toggleBtn.textContent = "🔗 Koppelen";
+          configs.forEach(entry => {
+            const tr = document.createElement("tr");
+            tr.style.cursor = "pointer";
+            tr.onclick = () => {
+              selectedConfigName = entry.bestandsnaam;
+              metaMap[entry.bestandsnaam] = entry.naam;
+              highlightSelectedConfig(entry.naam);
+              document.querySelector("button[onclick='editSelectedConfig()']").disabled = false;
+              document.querySelector("button[onclick='deleteSelectedConfig()']").disabled = false;
+              const toggleBtn = document.getElementById("toggleLinkBtn");
+              if (entry.gekoppeld && entry.gekoppeld.length > 0) {
+                toggleBtn.disabled = false;
+                toggleBtn.textContent = "❌ Ontkoppelen";
+                toggleBtn.onclick = unlinkSelectedConfig;
+              } else if (currentVpoID) {
+                toggleBtn.disabled = false;
+                toggleBtn.textContent = "🔗 Koppelen";
+                toggleBtn.onclick = linkSelectedConfig;
+              } else {
+                toggleBtn.disabled = true;
+                toggleBtn.textContent = "🔗 Koppelen";
+              }
+            };
+            const displayName = metaMap[entry.naam] || entry.naam;
+            tr.innerHTML = `<td style="padding: 5px;">${displayName}</td>
+              <td style="padding: 5px;">${entry.gekoppeld && entry.gekoppeld.length > 0 ? "✅" : "❌"}</td>`;
+            ul.appendChild(tr);
+          });
+          document.querySelector("button[onclick='editSelectedConfig()']").disabled = true;
+          document.querySelector("button[onclick='deleteSelectedConfig()']").disabled = true;
+        }
+        else if (data.startsWith("CONFIG_DATA=")) {
+          // Backup JSON data into ZIP
+          if (backupPending) {
+            const json = data.substring("CONFIG_DATA=".length).trim();
+            if (backupIndex >= backupNames.length) return;
+            const filename = backupNames[backupIndex];
+            backupZip.file(filename, json);
+            backupIndex++;
+            if (backupIndex < backupNames.length) {
+              writer.write("LOAD_CONFIG=" + backupNames[backupIndex] + "\r\n");
+            } else {
+              backupZip.generateAsync({ type: "blob" }).then(async blob => {
+                const zipName = "backupdisplayconfig_" + backupTimestamp + ".zip";
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = zipName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                backupPending = false;
+                writer.write("LIST_CONFIGS\r\n");
+                await showDialog({
+                  message: 'Backup voltooid',
+                  buttons: [{ value: 'ok', label: 'OK' }]
+                });
+              });
+            }
+            return;
+          }
+          const jsonStr = data.substring("CONFIG_DATA=".length).trim();
+          let payload;
+          payload = safeJSONParse(jsonStr, null);
+          if (!payload || !Array.isArray(payload.config)) {
+            console.error('Invalid CONFIG_DATA JSON', payload, jsonStr);
+            return;
+          }
+          // === DEBUG LOGGING for CONFIG_DATA ===
+          console.log("CONFIG_DATA payload.meta:", payload.meta);
+          console.log("CONFIG_DATA payload.config:", payload.config);
+          // Allow configs of any length; pad up to 64 entries if shorter
+          const config = payload.config.slice();
+          while (config.length < 64) {
+            config.push({ naam: "", naam2: "", voet: "", manuaal: "" });
+          }
+          const meta = payload.meta || {};
+          config.forEach((item, i) => {
+            document.querySelector(`[data-index='${i}'][data-field='naam']`).value = item.naam;
+            document.querySelector(`[data-index='${i}'][data-field='naam2']`).value = item.naam2;
+            document.querySelector(`[data-index='${i}'][data-field='voet']`).value = item.voet;
+            document.querySelector(`[data-index='${i}'][data-field='manuaal']`).value = item.manuaal;
+          });
+          document.getElementById("fieldPlaats").value = meta.plaats || "";
+          document.getElementById("fieldOrgelbouwer").value = meta.orgelbouwer || "";
+          document.getElementById("fieldJaartal").value = meta.jaartal || "";
+          document.getElementById("fieldConnectedMidiMessage").value = meta.ConnectedMidiMessage || "";
+          if (linkingPending) {
+            document.getElementById("fieldConnectedMidiMessage").value = currentVpoID;
+            linkingPending = false;
+            saveConfig();
+            return;
+          } else if (unlinkingPending) {
+            document.getElementById("fieldConnectedMidiMessage").value = "";
+            unlinkingPending = false;
+            saveConfig();
+            return;
+          } else if (!backupPending) {
+            const plaatsVal = document.getElementById("fieldPlaats").value;
+            const orgelBouwerVal = document.getElementById("fieldOrgelbouwer").value;
+            const jaartalVal = document.getElementById("fieldJaartal").value;
+            metaMap[selectedConfigName] = `${plaatsVal} - ${orgelBouwerVal}(${jaartalVal})`;
+            openEditor();
+            operationInProgress = false;
+          }
+        }
+      }
+      function highlightSelectedConfig(name) {
+        const rows = document.querySelectorAll("#configList tr");
+        rows.forEach(row => {
+          if (row.cells[0].textContent === name) row.classList.add("selected");
+          else row.classList.remove("selected");
+        });
+      }
+      function createNewConfig() {
+       console.log('webinterface', 'Nieuw configuratie scherm geopend');
+        selectedConfigName = "new_config";
+        clearEditor();
         openEditor();
       }
-      else if (data.startsWith("SAMPLESET=")) {
-        const name = data.substring("SAMPLESET=".length);
-        document.getElementById("samplesetInfo").textContent = "Sampleset: " + name;
+      function editSelectedConfig() {
+        console.log('webinterface', 'Bewerk configuratie geactiveerd');
+        if (selectedConfigName) loadConfig(selectedConfigName);
+        else alert("Selecteer eerst een configuratie om te bewerken.");
       }
-    }
-
-    function highlightSelectedConfig(name) {
-      const rows = document.querySelectorAll("#configList tr");
-      rows.forEach(row => {
-        row.style.fontWeight = row.cells[0].textContent === name ? "bold" : "normal";
-      });
-    }
-
-    function createNewConfig() {
-      selectedConfigName = "new_config";
-      clearEditor();
-      openEditor();
-    }
-
-    function editSelectedConfig() {
-      if (selectedConfigName) {
-        loadConfig(selectedConfigName);
-      } else {
-        alert("Selecteer eerst een configuratie om te bewerken.");
+      function deleteSelectedConfig() {
+        console.log('webinterface', 'Verwijderen configuratie gestart');
+        if (selectedConfigName) {
+          if (confirm(`Weet je zeker dat je '${selectedConfigName}' wilt verwijderen?`)) {
+            operationInProgress = true;
+            writer.write("DELETE_CONFIG=" + selectedConfigName + "\r\n");
+            document.querySelectorAll("#configList tr").forEach(row => {
+              if (row.cells[0].textContent === selectedConfigName) row.remove();
+            });
+            selectedConfigName = null;
+            document.querySelector("button[onclick='editSelectedConfig()']").disabled = true;
+            document.querySelector("button[onclick='deleteSelectedConfig()']").disabled = true;
+          }
+        } else alert("Selecteer eerst een configuratie om te verwijderen.");
       }
-    }
-
-    function deleteSelectedConfig() {
-      if (selectedConfigName) {
-        if (confirm(`Weet je zeker dat je '${selectedConfigName}' wilt verwijderen?`)) {
-          writer.write("DELETE_CONFIG=" + selectedConfigName + "\n");
-          writer.write("LIST_CONFIGS\n");
-          selectedConfigName = null;
+      function linkSelectedConfig() {
+        console.log('webinterface', 'Configuratie koppeling gestart');
+        if (!selectedConfigName) return;
+        if (!currentVpoID) {
+          alert("Geen MIDI-bericht om te koppelen.");
+          return;
         }
-      } else {
-        alert("Selecteer eerst een configuratie om te verwijderen.");
+        // Uniekheid check
+        if (globalConfigs.some(e => e.gekoppeld === currentVpoID && e.bestandsnaam !== selectedConfigName)) {
+          alert(`MIDI-bericht ${currentVpoID} is al gekoppeld.`);
+          return;
+        }
+        linkingPending = true;
+        writer.write("LOAD_CONFIG=" + selectedConfigName + "\r\n");
       }
-    }
+      function unlinkSelectedConfig() {
+        console.log('webinterface', 'Configuratie ontkoppeling gestart');
+        if (!selectedConfigName) return;
+        unlinkingPending = true;
+        writer.write("LOAD_CONFIG=" + selectedConfigName + "\r\n");
+      }
+      function clearEditor() {
+        for (let i = 0; i < 64; i++) {
+          ["naam", "naam2", "voet", "manuaal"].forEach(field => {
+            document.querySelector(`[data-index='${i}'][data-field='${field}']`).value = "";
+          });
+        }
+        document.getElementById("fieldPlaats").value = "";
+        document.getElementById("fieldOrgelbouwer").value = "";
+        document.getElementById("fieldJaartal").value = "";
+        document.getElementById("fieldConnectedMidiMessage").value = "";
+      }
+      function openEditor() {
+        document.getElementById("configSection").style.display = "none";
+        document.getElementById("editorSection").style.display = "block";
+        selectEditorSide('left');
+      }
+      function closeEditor() {
+        document.getElementById("editorSection").style.display = "none";
+        document.getElementById("configSection").style.display = "block";
+      }
+      function selectEditorSide(side) {
+        const left = document.getElementById("leftGrid");
+        const right = document.getElementById("rightGrid");
+        const leftBtn = document.querySelector("button[onclick*='left']");
+        const rightBtn = document.querySelector("button[onclick*='right']");
+        if (side === 'left') {
+          left.classList.add("zoomed-in"); left.classList.remove("zoomed-out");
+          right.classList.add("zoomed-out"); right.classList.remove("zoomed-in");
+          leftBtn.classList.add("active"); rightBtn.classList.remove("active");
+        } else {
+          right.classList.add("zoomed-in"); right.classList.remove("zoomed-out");
+          left.classList.add("zoomed-out"); left.classList.remove("zoomed-in");
+          rightBtn.classList.add("active"); leftBtn.classList.remove("active");
+        }
+      }
+      function loadConfig(name) {
+        writer.write("LOAD_CONFIG=" + name + "\r\n");
+      }
+      function saveConfig() {
+        console.log('webinterface', 'Opslaan configuratie gestart');
+        const plaatsVal = document.getElementById("fieldPlaats").value.trim();
+        const orgelBouwerVal = document.getElementById("fieldOrgelbouwer").value.trim();
+        const jaartalVal = document.getElementById("fieldJaartal").value.trim();
+        const connectedVal = document.getElementById("fieldConnectedMidiMessage").value.trim();
+        const displayNaam = `${plaatsVal} - ${orgelBouwerVal}(${jaartalVal})`;
+        const nieuweBestandsnaam = `${plaatsVal}_${orgelBouwerVal}_${jaartalVal}.json`;
 
-    function clearEditor() {
-      for (let i = 0; i < 64; i++) {
-        ["naam", "naam2", "voet", "manuaal"].forEach(field => {
-          document.querySelector(`[data-index='${i}'][data-field='${field}']`).value = "";
+        if (connectedVal) {
+          const dup = globalConfigs.find(e => e.gekoppeld === connectedVal && e.bestandsnaam !== selectedConfigName);
+          if (dup) {
+            alert(`ConnectedMidiMessage "${connectedVal}" is al gekoppeld aan "${dup.naam}".`);
+            operationInProgress = false;
+            return;
+          }
+        }
+
+        if (globalConfigs.some(e => e.bestandsnaam === nieuweBestandsnaam && e.bestandsnaam !== selectedConfigName)) {
+          alert(`Configuratie "${displayNaam}" bestaat al.`);
+          operationInProgress = false;
+          return;
+        }
+
+        // Verwijder oude bestand als bestandsnaam wijzigt
+        if (selectedConfigName && selectedConfigName !== nieuweBestandsnaam) {
+          operationInProgress = true;
+          writer.write("DELETE_CONFIG=" + selectedConfigName + "\r\n");
+        }
+
+        selectedConfigName = nieuweBestandsnaam;
+
+        const config = [];
+        for (let i = 0; i < 64; i++) {
+          config.push({
+            naam: document.querySelector(`[data-index='${i}'][data-field='naam']`).value,
+            naam2: document.querySelector(`[data-index='${i}'][data-field='naam2']`).value,
+            voet: document.querySelector(`[data-index='${i}'][data-field='voet']`).value,
+            manuaal: document.querySelector(`[data-index='${i}'][data-field='manuaal']`).value
+          });
+        }
+
+        const meta = {
+          plaats: plaatsVal,
+          orgelbouwer: orgelBouwerVal,
+          jaartal: jaartalVal,
+          ConnectedMidiMessage: connectedVal
+        };
+
+        const fullPayload = { meta, config };
+        const json = JSON.stringify(fullPayload);
+        operationInProgress = true;
+        writer.write("SAVE_CONFIG=" + nieuweBestandsnaam + "\r\n");
+        writer.write(json + "\r\n");
+        metaMap[selectedConfigName] = displayNaam;
+        writer.write("LIST_CONFIGS\r\n");
+        closeEditor();
+      }
+
+      function sendToDisplays() {
+        console.log('webinterface', 'Versturen naar displays gestart');        
+        // Signal to Arduino to send configuration to displays
+        writer.write("SEND_TO_DISPLAYS=" + selectedConfigName + "\r\n");
+      }
+
+      /**
+       * Show a configurable dialog.
+       * @param {{title?:string, message:string, buttons:{value:string,label:string}[]}} opts
+       * @returns {Promise<string>} resolves to the clicked button value
+       */
+      function showDialog(opts) {
+        const dlg = document.getElementById('genericDialog');
+        const titleEl = dlg.querySelector('#genericTitle');
+        const msgEl   = dlg.querySelector('#genericMessage');
+        const btnMenu = dlg.querySelector('#genericButtons');
+        titleEl.textContent = opts.title || '';
+        msgEl.textContent   = opts.message;
+        btnMenu.innerHTML    = '';
+        for (const b of opts.buttons) {
+          const btn = document.createElement('button');
+          btn.value = b.value;
+          btn.textContent = b.label;
+          btnMenu.appendChild(btn);
+        }
+        return new Promise(resolve => {
+          dlg.addEventListener('close', function onClose() {
+            dlg.removeEventListener('close', onClose);
+            resolve(dlg.returnValue);
+          });
+          dlg.showModal();
         });
       }
-      document.getElementById("fieldPlaats").value = "";
-      document.getElementById("fieldOrgelbouwer").value = "";
-      document.getElementById("fieldJaartal").value = "";
-    }
 
-    function loadConfig(name) {
-      writer.write("LOAD_CONFIG=" + name + "\n");
-    }
+      // Backup configurations logic using JSZip
+      let backupPending = false;
+      let backupNames = [];
+      let backupIndex = 0;
+      let backupZip = null;
+      let backupTimestamp = "";
 
-    function saveConfig() {
-      const config = [];
-      for (let i = 0; i < 64; i++) {
-        const item = {
-          naam: document.querySelector(`[data-index='${i}'][data-field='naam']`).value,
-          naam2: document.querySelector(`[data-index='${i}'][data-field='naam2']`).value,
-          voet: document.querySelector(`[data-index='${i}'][data-field='voet']`).value,
-          manuaal: document.querySelector(`[data-index='${i}'][data-field='manuaal']`).value
-        };
-        config.push(item);
+      document.getElementById("backupBtn").addEventListener("click", () => {
+        console.log('webinterface', 'Backup configuraties gestart');
+        operationInProgress = true;
+        // Start ZIP en timestamp
+        backupZip = new JSZip();
+        backupTimestamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0];
+        backupPending = true;
+        backupNames = [];
+        backupIndex = 0;
+        writer.write("LIST_CONFIGS\r\n");
+      });
+
+      // Restore configurations from ZIP
+      document.getElementById("restoreBtn").addEventListener("click", () => {
+        console.log('webinterface', 'Restore configuraties gestart');
+        if (operationInProgress) {
+          alert("Er loopt een bewerking. Wacht tot deze voltooid is.");
+          return;
+        }
+        document.getElementById("restoreZipInput").click();
+      });
+      document.getElementById("restoreZipInput").addEventListener("change", async (event) => {
+        if (operationInProgress) {
+          alert("Er loopt een bewerking. Wacht tot deze voltooid is.");
+          event.target.value = "";
+          return;
+        }
+        operationInProgress = true;
+        const file = event.target.files[0];
+        if (!file) return;
+
+        // 1) Probeer de ZIP in te laden en valideer JSON-bestanden
+        let zip;
+        try {
+          zip = await JSZip.loadAsync(file);
+        } catch (err) {
+          alert("Ongeldige ZIP: kan het bestand niet openen.");
+          event.target.value = "";
+          return;
+        }
+
+        const validFiles = [];
+        for (const filename of Object.keys(zip.files)) {
+          if (!filename.toLowerCase().endsWith(".json")) continue;
+          try {
+            const jsonText = await zip.files[filename].async("text");
+            const payload = safeJSONParse(jsonText, null);
+            if (!payload) throw new Error('Invalid JSON');
+
+            // Controleer verplichte velden in payload.meta
+            const m = payload.meta || {};
+            const okMeta = m.plaats && m.orgelbouwer && m.jaartal;
+            const okConfig = Array.isArray(payload.config);
+            if (!okMeta || !okConfig) throw new Error("Ontbrekende velden");
+
+            validFiles.push({ filename, jsonText });
+          } catch (e) {
+            alert(`Ongeldig JSON-bestand in backup: ${filename}`);
+            event.target.value = "";
+            return;
+          }
+        }
+
+        if (validFiles.length === 0) {
+          alert("Geen .json-configuraties gevonden in de ZIP.");
+          event.target.value = "";
+          return;
+        }
+
+        // 2) Vraag wat te doen met bestaande configs
+        const action = await showDialog({
+          title: 'Restore configuratie opties',
+          message: `Backup bevat ${validFiles.length} configuratie(s). Kies een optie:`,
+          buttons: [
+            { value: 'overwrite', label: 'Overschrijven' },
+            { value: 'append',    label: 'Toevoegen'   },
+            { value: 'cancel',    label: 'Annuleren'  }
+          ]
+        });
+        if (action === 'cancel') {
+          operationInProgress = false;
+          event.target.value = "";
+          return;
+        }
+        if (action === 'overwrite') {
+          globalConfigs.forEach(cfg => {
+            writer.write("DELETE_CONFIG=" + cfg.bestandsnaam + "\r\n");
+          });
+        }
+
+        // 3) Schrijf alle geldige bestanden weg
+        for (const { filename, jsonText } of validFiles) {
+          writer.write("SAVE_CONFIG=" + filename + "\r\n");
+          writer.write(jsonText + "\r\n");
+          await new Promise(r => setTimeout(r, 100));
+        }
+        writer.write("LIST_CONFIGS\r\n");
+        operationInProgress = false;
+        event.target.value = "";
+        await showDialog({
+          message: 'Restore voltooid',
+          buttons: [{ value: 'ok', label: 'OK' }]
+        });
+      });
+
+      // Unified XML import button functionality
+      document.getElementById("importXmlBtn").addEventListener("click", () => {
+        document.getElementById("importXmlInput").click();
+      });
+      document.getElementById("importXmlInput").addEventListener("change", async (event) => {
+        operationInProgress = true;
+        const files = Array.from(event.target.files);
+        if (!files.length) {
+          operationInProgress = false;
+          return;
+        }
+
+        if (files.length === 1) {
+          console.log('webinterface', 'XML import gestart');
+          // Single import: load into editor
+          const file = files[0];
+          try {
+            const text = await file.text();
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(text, "application/xml");
+            // Validate XML structure
+            if (xml.getElementsByTagName("parsererror").length > 0) {
+              alert("Ongeldige XML: parsefout gedetecteerd.");
+              operationInProgress = false;
+              return;
+            }
+            const organNode = xml.querySelector("OrganConfiguration > Organ");
+            if (!organNode) {
+              alert("Ongeldige XML: OrganConfiguration > Organ ontbreekt.");
+              operationInProgress = false;
+              return;
+            }
+            // Check required Organ children
+            const requiredFields = ["OrganCity", "OrganBuilder", "OrganBuildDate", "ConnectedMidiMessage"];
+            for (const field of requiredFields) {
+              if (!organNode.querySelector(field)) {
+                alert(`Ongeldige XML: element ${field} ontbreekt.`);
+                operationInProgress = false;
+                return;
+              }
+            }
+            // Check at least one Register
+            const registers = xml.querySelectorAll("RegisterConfigurations > Register");
+            if (registers.length === 0) {
+              alert("Ongeldige XML: geen Register-elementen gevonden.");
+              operationInProgress = false;
+              return;
+            }
+            document.getElementById("fieldPlaats").value = organNode.querySelector("OrganCity")?.textContent || "";
+            document.getElementById("fieldOrgelbouwer").value = organNode.querySelector("OrganBuilder")?.textContent || "";
+            document.getElementById("fieldJaartal").value = organNode.querySelector("OrganBuildDate")?.textContent || "";
+            document.getElementById("fieldConnectedMidiMessage").value = organNode.querySelector("ConnectedMidiMessage")?.textContent || "";
+            registers.forEach(regNode => {
+              const idx = parseInt(regNode.getAttribute("ID"), 10) - 1;
+              if (idx < 0 || idx >= 64) return;
+              document.querySelector(`[data-index='${idx}'][data-field='naam']`).value = regNode.querySelector("Registernaam")?.textContent || "";
+              document.querySelector(`[data-index='${idx}'][data-field='naam2']`).value = regNode.querySelector("Registernaam2")?.textContent || "";
+              document.querySelector(`[data-index='${idx}'][data-field='voet']`).value = regNode.querySelector("RegisterSterkte")?.textContent || "";
+              document.querySelector(`[data-index='${idx}'][data-field='manuaal']`).value = regNode.querySelector("Manuaal")?.textContent || "";
+            });
+            // bepaal meteen de bestandsnaam zonder .json
+            const plaatsVal = organNode.querySelector("OrganCity")?.textContent || "";
+            const builderVal = organNode.querySelector("OrganBuilder")?.textContent || "";
+            const dateVal = organNode.querySelector("OrganBuildDate")?.textContent || "";
+            selectedConfigName = `${plaatsVal}_${builderVal}_${dateVal}`;  // exact zoals op SD
+            openEditor();
+            await showDialog({
+              message: 'XML import voltooid',
+              buttons: [{ value: 'ok', label: 'OK' }]
+            });
+          } catch (err) {
+            console.error("Fout bij inlezen XML:", err);
+            alert("Kon XML niet verwerken. Controleer het bestand.");
+          }
+        } else {
+          // Bulk import: send directly to Arduino
+          for (const file of files) {
+            try {
+              const text = await file.text();
+              const parser = new DOMParser();
+              const xml = parser.parseFromString(text, "application/xml");
+              const organNode = xml.querySelector("OrganConfiguration > Organ");
+              const registerNodes = xml.querySelectorAll("RegisterConfigurations > Register");
+              if (!organNode || !registerNodes.length) {
+                console.warn("XML structuur ongeldig:", file.name);
+                continue;
+              }
+              const plaatsVal = organNode.querySelector("OrganCity")?.textContent || "";
+              const orgelbouwerVal = organNode.querySelector("OrganBuilder")?.textContent || "";
+              const jaartalVal = organNode.querySelector("OrganBuildDate")?.textContent || "";
+              const connectedVal = organNode.querySelector("ConnectedMidiMessage")?.textContent || "";
+              const filename = `${plaatsVal}_${orgelbouwerVal}_${jaartalVal}.json`;
+              if (
+                invalidPattern.test(plaatsVal) ||
+                invalidPattern.test(orgelbouwerVal) ||
+                invalidPattern.test(jaartalVal)
+              ) {
+                console.warn(`Overslaan ${filename}: ongeldige karakters`);
+                continue;
+              }
+              // Uniqueness check for bulk import
+              if (connectedVal) {
+                const dupBulk = globalConfigs.find(e => e.gekoppeld === connectedVal);
+                if (dupBulk) {
+                  console.warn(`Overslaan bulk-import: MIDI "${connectedVal}" al gekoppeld aan ${dupBulk.naam}`);
+                  continue;
+                }
+              }
+              const configArray = new Array(64).fill({ naam: "", naam2: "", voet: "", manuaal: "" });
+              registerNodes.forEach(regNode => {
+                const idx = parseInt(regNode.getAttribute("ID"), 10) - 1;
+                if (idx < 0 || idx >= 64) return;
+                configArray[idx] = {
+                  naam: regNode.querySelector("Registernaam")?.textContent || "",
+                  naam2: regNode.querySelector("Registernaam2")?.textContent || "",
+                  voet: regNode.querySelector("RegisterSterkte")?.textContent || "",
+                  manuaal: regNode.querySelector("Manuaal")?.textContent || ""
+                };
+              });
+              // Uniekheid check op combinatie plaats/orgelbouwer/jaartal bij bulk-import
+              if (globalConfigs.find(e => e.bestandsnaam === filename)) {
+                console.warn(`Overslaan bulk-import: configuratie "${filename}" bestaat al.`);
+                continue;
+              }
+              const payload = {
+                meta: { plaats: plaatsVal, orgelbouwer: orgelbouwerVal, jaartal: jaartalVal, ConnectedMidiMessage: connectedVal || 0 },
+                config: configArray
+              };
+              writer.write("SAVE_CONFIG=" + filename + "\r\n");
+              writer.write(JSON.stringify(payload) + "\r\n");
+              await new Promise(r => setTimeout(r, 200));
+            } catch (err) {
+              console.error("Fout bij bulk import file:", file.name, err);
+            }
+          }
+          writer.write("LIST_CONFIGS\r\n");
+        }
+        operationInProgress = false;
+        event.target.value = "";
+        await showDialog({
+          message: 'XML import voltooid',
+          buttons: [{ value: 'ok', label: 'OK' }]
+        });
+      });
+      window.addEventListener("load", () => {
+        // Debug toggle binding
+        document.getElementById("debugToggleBtn").addEventListener("click", () => {
+          const dbg = document.getElementById("serialConsole");
+          const filters = document.getElementById("logFilters");
+          if (dbg.style.display === "none" || dbg.style.display === "") {
+            dbg.style.display = "block";
+            filters.style.display = "block";
+            dbg.scrollTop = dbg.scrollHeight;
+          } else {
+            dbg.style.display = "none";
+            filters.style.display = "none";
+          }
+        });
+        document.getElementById('filterAll').onclick = () => applyFilter('all');
+        document.getElementById('filterElectronics').onclick = () => applyFilter('electronica');
+        document.getElementById('filterWeb').onclick = () => applyFilter('webinterface');
+      });
+
+      function applyFilter(mode) {
+        document.querySelectorAll('#serialConsole .log-entry').forEach(el => {
+          if (mode === 'all') el.style.display = '';
+          else if (mode === 'electronica') el.style.display = el.classList.contains('log-electronica') ? '' : 'none';
+          else el.style.display = el.classList.contains('log-webinterface') ? '' : 'none';
+        });
+        const consoleDiv = document.getElementById('serialConsole');
+        consoleDiv.scrollTop = consoleDiv.scrollHeight;
       }
-      const meta = {
-        plaats: document.getElementById("fieldPlaats").value,
-        orgelbouwer: document.getElementById("fieldOrgelbouwer").value,
-        jaartal: document.getElementById("fieldJaartal").value
-      };
-      const fullPayload = { meta, config };
-      const json = JSON.stringify(fullPayload);
-      writer.write("SAVE_CONFIG=active\n");
-      writer.write(json + "\n");
-    }
+      // expose module functions for inline handlers
+      window.createNewConfig = createNewConfig;
+      window.editSelectedConfig = editSelectedConfig;
+      window.deleteSelectedConfig = deleteSelectedConfig;
+      window.selectEditorSide = selectEditorSide;
+      window.saveConfig = saveConfig;
+      window.closeEditor = closeEditor;
+      window.sendToDisplays = sendToDisplays;
+      window.linkSelectedConfig = linkSelectedConfig;
+      window.unlinkSelectedConfig = unlinkSelectedConfig;
 
-    function openEditor() {
-      document.getElementById("configSection").style.display = "none";
-      document.getElementById("editorSection").style.display = "block";
-      selectEditorSide('left');
-    }
-
-    function closeEditor() {
-      document.getElementById("editorSection").style.display = "none";
-      document.getElementById("configSection").style.display = "block";
-    }
-
-    function selectEditorSide(side) {
-      const left = document.getElementById("leftGrid");
-      const right = document.getElementById("rightGrid");
-      if (side === 'left') {
-        left.classList.add("zoomed-in");
-        left.classList.remove("zoomed-out");
-        right.classList.add("zoomed-out");
-        right.classList.remove("zoomed-in");
-      } else {
-        right.classList.add("zoomed-in");
-        right.classList.remove("zoomed-out");
-        left.classList.add("zoomed-out");
-        left.classList.remove("zoomed-in");
+      function insertDisplay(index) {
+        const blockStart = index < 32 ? 0 : 32;
+        const blockEnd = blockStart + 31;
+        for (let j = blockEnd; j > index; j--) {
+          const src = document.querySelectorAll(`[data-index='${j - 1}']`);
+          const dst = document.querySelectorAll(`[data-index='${j}']`);
+          src.forEach((inp, k) => { dst[k].value = inp.value; });
+        }
+        document.querySelectorAll(`[data-index='${index}']`).forEach(inp => { inp.value = ''; });
       }
-    }
-
-    document.getElementById("uiVersion").textContent = CURRENT_UI_VERSION;
-
-  </script>
+      function removeDisplay(index) {
+        const blockStart = index < 32 ? 0 : 32;
+        const blockEnd = blockStart + 31;
+        for (let j = index; j < blockEnd; j++) {
+          const src = document.querySelectorAll(`[data-index='${j + 1}']`);
+          const dst = document.querySelectorAll(`[data-index='${j}']`);
+          src.forEach((inp, k) => { dst[k].value = inp.value; });
+        }
+        document.querySelectorAll(`[data-index='${blockEnd}']`).forEach(inp => { inp.value = ''; });
+      }
+      function updateNaam2Visibility() {
+        document.querySelectorAll('[data-field="naam2"]').forEach(el => {
+          el.style.display = showNaam2 ? '' : 'none';
+        });
+      }
+      window.updateNaam2Visibility = updateNaam2Visibility;
+      window.insertDisplay = insertDisplay;
+      window.removeDisplay = removeDisplay;
+    </script>
   </main>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const updateNotice = document.getElementById("updateNotice");
-      const updateButton = document.getElementById("updateButton");
-      document.getElementById("uiVersion").textContent = CURRENT_UI_VERSION;
-
-      fetch("https://raw.githubusercontent.com/tuei2/DisplayConfiguratorV2/main/version.txt")
-        .then(response => response.text())
-        .then(latest => {
-          const latestVersion = latest.trim();
-          console.log("Huidige versie:", CURRENT_UI_VERSION, "Laatste versie:", latestVersion);
-          if (latestVersion !== CURRENT_UI_VERSION) {
-            updateNotice.textContent = `Nieuwe versie beschikbaar: ${latestVersion}`;
-            updateNotice.style.color = "#4da3ff";
-            updateButton.style.display = "inline-block";
-          } else {
-            updateNotice.textContent = `✅ Up-to-date`;
-            updateNotice.style.color = "#4dff4d";
-          }
-        })
-        .catch(err => {
-          console.warn("Versiecontrole mislukt:", err);
-          updateNotice.textContent = "⚠️ Versiecontrole mislukt";
-          updateNotice.style.color = "#ffa500";
-        });
-
-      updateButton.onclick = async () => {
-        try {
-          const response = await fetch("https://raw.githubusercontent.com/tuei2/DisplayConfiguratorV2/main/DisplayConfigurator.html");
-          const blob = await response.blob();
-          const url = URL.createObjectURL(blob);
-
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "DisplayConfigurator.html";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-
-          alert("Nieuwe versie is gedownload. Herstart de pagina met de nieuwe versie.");
-        } catch (error) {
-          console.error("Download mislukt:", error);
-          alert("Download mislukt. Probeer opnieuw.");
-        }
-      };
-    });
-  </script>
-
-  <footer style="text-align: center; font-size: 12px; color: #aaa; padding: 10px 0; background: var(--bg-color); border-top: 1px solid var(--border-color);">
-    Versie: <span id="uiVersion">1.0.1</span>
-    <span id="updateNotice" style="margin-left: 20px;"></span>
-    <button id="updateButton" class="btn" style="display:none; margin-left: 10px; font-size: 12px;">🔄 Update nu</button>
+  <!-- FOOTER -->
+  <div id="logFilters">
+    <button id="filterAll" class="btn">Alles</button>
+    <button id="filterElectronics" class="btn">Electronica logging</button>
+    <button id="filterWeb" class="btn">Web interface logging</button>
+  </div>
+  <div id="serialConsole" style="display:none;"></div>
+  <footer>
+    <button id="debugToggleBtn" class="btn ml-10 fs-12">🐞 Debug</button>
   </footer>
 </body>
+
 </html>
